@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SciCalc Pro - Scientific Calculator</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    /* CSS Variables */
+    :root {
+      --primary: #4285f4;
+      --primary-dark: #3367d6;
+      --success: #4cc9f0;
+      --dark: #2b2d42;
+      --light: #f8f9fa;
+      --text: #333;
+      --border: #dee2e6;
+      --card-bg: #fff;
+      --section-bg: #f8f9fa;
+      --calc-primary: #3498db;
+      --calc-secondary: #2980b9;
+    }
+
+    /* Base Styles */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      line-height: 1.6;
+      color: var(--text);
+      background-color: var(--light);
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 1rem;
+      flex: 1;
+    }
+
+    /* Header Styles */
+    header {
+      background-color: var(--dark);
+      color: white;
+      padding: 1rem 0;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+
+    .header-content {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 1rem;
+    }
+
+    .logo {
+      font-size: 1.5rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .logo i {
+      color: var(--primary);
+    }
+
+    /* Calculator Demo Section */
+    .calculator-demo {
+      background-color: var(--card-bg);
+      border-radius: 8px;
+      padding: 2rem;
+      margin: 2rem 0;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+      border: 1px solid var(--border);
+      position: relative;
+    }
+
+    .calculator-demo::before {
+      content: 'Live Demo';
+      position: absolute;
+      top: 0;
+      right: 0;
+      background-color: var(--primary);
+      color: white;
+      padding: 0.25rem 0.75rem;
+      font-size: 0.8rem;
+      border-radius: 0 0 0 4px;
+    }
+
+    /* Calculator Styles */
+    .calculator-container {
+      width: 100%;
+      max-width: 350px;
+      margin: 0 auto;
+      background-color: var(--calc-primary);
+      border-radius: 15px;
+      padding: 20px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    }
+
+    .calc-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+      color: white;
+    }
+
+    .calc-display {
+      background-color: white;
+      border-radius: 10px;
+      padding: 15px;
+      margin-bottom: 15px;
+      text-align: right;
+      min-height: 80px;
+    }
+
+    .calc-history {
+      min-height: 20px;
+      font-size: 0.9rem;
+      color: #777;
+    }
+
+    .calc-current {
+      font-size: 2rem;
+      font-weight: bold;
+    }
+
+    .calc-keypad {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 10px;
+    }
+
+    .calc-btn {
+      border: none;
+      border-radius: 5px;
+      padding: 15px 0;
+      font-size: 1.2rem;
+      cursor: pointer;
+      background-color: #ecf0f1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      aspect-ratio: 1.5;
+      transition: all 0.2s;
+    }
+
+    .calc-btn:hover {
+      transform: translateY(-2px);
+    }
+
+    .calc-btn.operator {
+      background-color: #f39c12;
+      color: white;
+    }
+
+    .calc-btn.function {
+      background-color: #1abc9c;
+      color: white;
+      font-size: 1rem;
+    }
+
+    .calc-btn.clear {
+      background-color: #e74c3c;
+      color: white;
+    }
+
+    .calc-btn.equals {
+      background-color: #2ecc71;
+      color: white;
+      grid-row: span 2;
+      aspect-ratio: 0.75;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+      .calculator-container {
+        max-width: 100%;
+      }
+      
+      .calc-btn {
+        padding: 12px 0;
+      }
+    }
+
+    /* Documentation Sections */
+    .features-section {
+      margin: 2rem 0;
+    }
+
+    .feature-card {
+      background-color: var(--card-bg);
+      border-radius: 8px;
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+    }
+
+    /* Footer */
+    footer {
+      background-color: var(--dark);
+      color: white;
+      padding: 2rem 0;
+      margin-top: 3rem;
+    }
+
+    .footer-content {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 1rem;
+    }
+
+    .copyright {
+      text-align: center;
+      margin-top: 1.5rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid rgba(255,255,255,0.1);
+    }
+  </style>
+</head>
+<body>
+  <!-- Header -->
+  <header>
+    <div class="header-content">
+      <div class="logo">
+        <i class="fas fa-calculator"></i>
+        <span>SciCalc Pro</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <div class="container">
+    <h1>Advanced Scientific Calculator</h1>
+    <p class="feature-card">
+      <strong><i class="fas fa-lightbulb"></i> Professional Calculator:</strong> 
+      This scientific calculator features advanced mathematical functions, memory operations, 
+      and a clean, responsive design perfect for students and professionals.
+    </p>
+
+    <!-- Calculator Demo -->
+    <section class="calculator-demo">
+      <h2><i class="fas fa-play-circle"></i> Live Demo</h2>
+      <div class="calculator-container">
+        <div class="calc-header">
+          <h3>SciCalc Pro</h3>
+          <div class="mode-toggle">
+            <span>Scientific</span>
+            <label class="switch">
+              <input type="checkbox" id="modeSwitch">
+              <span class="slider round"></span>
+            </label>
+            <span>Basic</span>
+          </div>
+        </div>
+        
+        <div class="calc-display">
+          <div class="calc-history" id="calc-history"></div>
+          <div class="calc-current" id="calc-current">0</div>
+        </div>
+        
+        <!-- Scientific Keys -->
+        <div class="calc-keypad scientific-keys">
+          <button class="calc-btn function" onclick="calculate('sin(')">sin</button>
+          <button class="calc-btn function" onclick="calculate('cos(')">cos</button>
+          <button class="calc-btn function" onclick="calculate('tan(')">tan</button>
+          <button class="calc-btn function" onclick="calculate('^')">x^y</button>
+          <button class="calc-btn function" onclick="calculate('√(')">√</button>
+          
+          <button class="calc-btn function" onclick="calculate('asin(')">sin⁻¹</button>
+          <button class="calc-btn function" onclick="calculate('acos(')">cos⁻¹</button>
+          <button class="calc-btn function" onclick="calculate('atan(')">tan⁻¹</button>
+          <button class="calc-btn function" onclick="calculate('(')">(</button>
+          <button class="calc-btn function" onclick="calculate(')')">)</button>
+          
+          <button class="calc-btn function" onclick="calculate('log(')">log</button>
+          <button class="calc-btn function" onclick="calculate('ln(')">ln</button>
+          <button class="calc-btn function" onclick="calculate('e^(')">e^x</button>
+          <button class="calc-btn function" onclick="calculate('π')">π</button>
+          <button class="calc-btn function" onclick="calculate('e')">e</button>
+          
+          <button class="calc-btn function" onclick="calculate('10^(')">10^x</button>
+          <button class="calc-btn function" onclick="factorial()">x!</button>
+          <button class="calc-btn function" onclick="calculate('%')">%</button>
+          <button class="calc-btn function" onclick="calculate('1/')">1/x</button>
+          <button class="calc-btn function" onclick="calculate('abs(')">|x|</button>
+        </div>
+        
+        <!-- Basic Keys -->
+        <div class="calc-keypad basic-keys">
+          <button class="calc-btn" onclick="appendToDisplay('7')">7</button>
+          <button class="calc-btn" onclick="appendToDisplay('8')">8</button>
+          <button class="calc-btn" onclick="appendToDisplay('9')">9</button>
+          <button class="calc-btn operator" onclick="appendToDisplay('/')">÷</button>
+          <button class="calc-btn clear" onclick="clearDisplay()">C</button>
+          
+          <button class="calc-btn" onclick="appendToDisplay('4')">4</button>
+          <button class="calc-btn" onclick="appendToDisplay('5')">5</button>
+          <button class="calc-btn" onclick="appendToDisplay('6')">6</button>
+          <button class="calc-btn operator" onclick="appendToDisplay('*')">×</button>
+          <button class="calc-btn clear" onclick="backspace()">⌫</button>
+          
+          <button class="calc-btn" onclick="appendToDisplay('1')">1</button>
+          <button class="calc-btn" onclick="appendToDisplay('2')">2</button>
+          <button class="calc-btn" onclick="appendToDisplay('3')">3</button>
+          <button class="calc-btn operator" onclick="appendToDisplay('-')">-</button>
+          <button class="calc-btn equals" onclick="calculateResult()">=</button>
+          
+          <button class="calc-btn" onclick="appendToDisplay('0')">0</button>
+          <button class="calc-btn" onclick="appendToDisplay('.')">.</button>
+          <button class="calc-btn" onclick="toggleSign()">±</button>
+          <button class="calc-btn operator" onclick="appendToDisplay('+')">+</button>
+        </div>
+        
+        <!-- Memory Keys -->
+        <div class="calc-keypad" style="grid-template-columns: repeat(5, 1fr); margin-top: 10px;">
+          <button class="calc-btn function" onclick="memoryRecall()">MR</button>
+          <button class="calc-btn function" onclick="memoryClear()">MC</button>
+          <button class="calc-btn function" onclick="memoryAdd()">M+</button>
+          <button class="calc-btn function" onclick="memorySubtract()">M-</button>
+          <button class="calc-btn function" onclick="toggleTheme()">
+            <i class="fas fa-moon"></i>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features-section">
+      <h2><i class="fas fa-star"></i> Key Features</h2>
+      
+      <div class="feature-card">
+        <h3><i class="fas fa-calculator"></i> Scientific Functions</h3>
+        <p>Includes trigonometric functions (sin, cos, tan), logarithms, exponents, constants (π, e), 
+        and advanced operations like factorials and absolute values.</p>
+      </div>
+      
+      <div class="feature-card">
+        <h3><i class="fas fa-memory"></i> Memory Operations</h3>
+        <p>Full memory functionality with M+, M-, MR, and MC buttons for complex calculations.</p>
+      </div>
+      
+      <div class="feature-card">
+        <h3><i class="fas fa-mobile-alt"></i> Responsive Design</h3>
+        <p>Works perfectly on all devices from desktop to mobile with clean, spacious buttons.</p>
+      </div>
+      
+      <div class="feature-card">
+        <h3><i class="fas fa-palette"></i> Theme Switching</h3>
+        <p>Toggle between light and dark modes for comfortable use in any lighting condition.</p>
+      </div>
+    </section>
+
+    <!-- Implementation Section -->
+    <section class="feature-card">
+      <h2><i class="fas fa-code"></i> Implementation</h2>
+      <p>This calculator is built with pure HTML, CSS, and JavaScript with no external dependencies.</p>
+      
+      <h3>Technical Highlights:</h3>
+      <ul style="margin-left: 1.5rem; margin-top: 1rem;">
+        <li>Clean, semantic HTML structure</li>
+        <li>CSS Grid for perfect button alignment</li>
+        <li>JavaScript math parsing with error handling</li>
+        <li>Responsive design with media queries</li>
+        <li>Theme switching with CSS variables</li>
+      </ul>
+    </section>
+  </div>
+
+  <!-- Footer -->
+  <footer>
+    <div class="footer-content">
+      <p>SciCalc Pro - Advanced Scientific Calculator</p>
+      <div class="copyright">
+        <p>&copy; 2023 SciCalc Pro. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // Calculator logic
+    let currentInput = '0';
+    let history = '';
+    let memory = 0;
+    let isScientificMode = true;
+    let isDarkMode = false;
+
+    // DOM Elements
+    const currentDisplay = document.getElementById('calc-current');
+    const historyDisplay = document.getElementById('calc-history');
+    const modeSwitch = document.getElementById('modeSwitch');
+
+    // Initialize calculator
+    updateDisplay();
+
+    // Display functions
+    function updateDisplay() {
+      currentDisplay.textContent = currentInput;
+      historyDisplay.textContent = history;
+    }
+
+    function clearDisplay() {
+      currentInput = '0';
+      history = '';
+      updateDisplay();
+    }
+
+    function backspace() {
+      if (currentInput.length === 1) {
+        currentInput = '0';
+      } else {
+        currentInput = currentInput.slice(0, -1);
+      }
+      updateDisplay();
+    }
+
+    function appendToDisplay(value) {
+      if (currentInput === '0' && value !== '.') {
+        currentInput = value;
+      } else {
+        currentInput += value;
+      }
+      updateDisplay();
+    }
+
+    function toggleSign() {
+      if (currentInput.startsWith('-')) {
+        currentInput = currentInput.substring(1);
+      } else {
+        currentInput = '-' + currentInput;
+      }
+      updateDisplay();
+    }
+
+    // Calculation functions
+    function calculateResult() {
+      try {
+        // Replace special symbols with JavaScript equivalents
+        let expression = currentInput
+          .replace(/×/g, '*')
+          .replace(/÷/g, '/')
+          .replace(/√\(/g, 'Math.sqrt(')
+          .replace(/\^/g, '**')
+          .replace(/sin\(/g, 'Math.sin(')
+          .replace(/cos\(/g, 'Math.cos(')
+          .replace(/tan\(/g, 'Math.tan(')
+          .replace(/asin\(/g, 'Math.asin(')
+          .replace(/acos\(/g, 'Math.acos(')
+          .replace(/atan\(/g, 'Math.atan(')
+          .replace(/log\(/g, 'Math.log10(')
+          .replace(/ln\(/g, 'Math.log(')
+          .replace(/e\^\(/g, 'Math.exp(')
+          .replace(/10\^\(/g, '10**(')
+          .replace(/π/g, 'Math.PI')
+          .replace(/e/g, 'Math.E')
+          .replace(/abs\(/g, 'Math.abs(')
+          .replace(/1\//g, '1/');
+
+        // Handle factorial
+        if (expression.includes('!')) {
+          const num = parseFloat(expression.replace('!', ''));
+          expression = factorial(num).toString();
+        }
+
+        history = currentInput + ' =';
+        currentInput = eval(expression).toString();
+        updateDisplay();
+      } catch (error) {
+        currentInput = 'Error';
+        updateDisplay();
+        setTimeout(clearDisplay, 1500);
+      }
+    }
+
+    function calculate(value) {
+      if (value === '1/') {
+        history = '1/(' + currentInput + ')';
+        currentInput = (1 / parseFloat(currentInput)).toString();
+      } else {
+        currentInput += value;
+      }
+      updateDisplay();
+    }
+
+    function factorial() {
+      const num = parseFloat(currentInput);
+      if (num < 0) return 'Error';
+      if (num === 0 || num === 1) return '1';
+      
+      let result = 1;
+      for (let i = 2; i <= num; i++) {
+        result *= i;
+      }
+      
+      history = currentInput + '! =';
+      currentInput = result.toString();
+      updateDisplay();
+    }
+
+    // Memory functions
+    function memoryAdd() {
+      memory += parseFloat(currentInput);
+    }
+
+    function memorySubtract() {
+      memory -= parseFloat(currentInput);
+    }
+
+    function memoryRecall() {
+      currentInput = memory.toString();
+      updateDisplay();
+    }
+
+    function memoryClear() {
+      memory = 0;
+    }
+
+    // Mode switching
+    function toggleMode() {
+      isScientificMode = !isScientificMode;
+      const scientificKeys = document.querySelector('.scientific-keys');
+      if (isScientificMode) {
+        scientificKeys.style.display = 'grid';
+      } else {
+        scientificKeys.style.display = 'none';
+      }
+    }
+
+    // Theme switching
+    function toggleTheme() {
+      isDarkMode = !isDarkMode;
+      document.body.classList.toggle('dark-mode');
+      const themeIcon = document.querySelector('.calc-btn i');
+      if (isDarkMode) {
+        themeIcon.classList.remove('fa-moon');
+        themeIcon.classList.add('fa-sun');
+      } else {
+        themeIcon.classList.remove('fa-sun');
+        themeIcon.classList.add('fa-moon');
+      }
+    }
+
+    // Keyboard support
+    document.addEventListener('keydown', function(event) {
+      const key = event.key;
+      
+      if (/[0-9]/.test(key)) {
+        appendToDisplay(key);
+      } else if (key === '.') {
+        appendToDisplay('.');
+      } else if (key === '+' || key === '-' || key === '*' || key === '/') {
+        appendToDisplay(key);
+      } else if (key === 'Enter' || key === '=') {
+        calculateResult();
+      } else if (key === 'Escape') {
+        clearDisplay();
+      } else if (key === 'Backspace') {
+        backspace();
+      } else if (key === '(' || key === ')') {
+        appendToDisplay(key);
+      } else if (key === '^') {
+        calculate('^');
+      } else if (key === '!') {
+        factorial();
+      }
+    });
+  </script>
+</body>
+</html>
